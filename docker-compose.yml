@@ -1,19 +1,24 @@
 version: "3.8"
 services:
-  mssql:
+myServer:
     image: mcr.microsoft.com/mssql/server:2019-CU5-ubuntu-18.04
     ports:
       - 1433:1433
     environment:
       ACCEPT_EULA: Y
       SA_PASSWORD: YourStrong@Passw0rd
-  postgres:
-    image: postgres:12
+      restart: always
+  TestProject.WebAPI:
+  depends_on: - myServer
+    image:  app/TestProject.WebAPI:runtime
+    build:
+      context: .
     ports:
-      - 5432:5432
-    environment:
-      POSTGRES_PASSWORD: YourStrong@Passw0rd
-  mysql:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: YourStrong@Passw0rd
+ -"8080:5000"
+ -"8081:5001"
+ environment: - ASPNETCORE_Kestrel__Certificates__Default__Password=awesomzipcoepass
+ - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/zipcoCertificate.pfx 
+ - SECRET=ZipcoSecretKey
+ volumes: - ${USERPROFILE}/.aspnet/https:/https/
+  
+  
